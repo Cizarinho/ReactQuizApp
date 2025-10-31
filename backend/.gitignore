@@ -1,0 +1,19 @@
+# Betr./Systemdateien
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Abhängigkeiten
+node_modules/
+
+# Produktions- / Build-Ordner
+/dist/
+/build/
+
+# dotenv-Datei
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
