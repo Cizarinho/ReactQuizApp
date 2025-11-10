@@ -37,7 +37,7 @@ export const createQuestion = async (questionData) => {
 export const createMultipleQuestions = async (questions) => {
     const sql = "INSERT INTO fragen(frage_text, right answer, wrong answer_1, wrong_answer_2, wrong_answer_3, schwierigkeit) VALUES (?, ?, ?, ?, ?, ?)"
 
-    const values = questions.map(q => [frage_text, korrekte_antwort, falsche_antwort_1, falsche_antwort_2, falsche_antwort_3, schwierigkeit])
+    const values = questions.map(q => [q.frage_text, q.korrekte_antwort, q.falsche_antwort_1, q.falsche_antwort_2, q.falsche_antwort_3, q.schwierigkeit])
 
     const [result] = await pool.query(sql, [values]);
 

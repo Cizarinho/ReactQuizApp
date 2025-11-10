@@ -41,11 +41,28 @@ export const importApiQuestions = async (req,res) => {
     try {
         const amount = req.body.amount || 10;
         const response = await axios.get(`https://opentdb.com/api.php?amount=${amount}&type=multiple`);
+
         if (response.data.response_code !== 0) {
             return res.status(500).json({success: false, message: 'Fehler beim Abrufen der Fragen'});
         }
 
         const apiQuestions = response.data.results
+
+        const formattedQuestions = apiQuestions.map(apiQ => {
+            const answers = [...apiQ.incorrect_answers,apiQ.correct_answer]
+
+            for (let i = answers.length-1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [answers[i], answers[j]] = [answers[j], answers[i]]
+            }
+
+            const decode = (str) =>
+                str.replace(/&quot;/g,)
+                   .replace()
+                   .replace()
+                   .replace()
+                   .replace()
+        })
 
     } catch {
 
