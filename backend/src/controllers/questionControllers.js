@@ -1,9 +1,9 @@
-import { createQuestion, getAllQuestions } from "../models/questionModel";
-
+import { createQuestion, getAllQuestions, createMultipleQuestions } from "../models/questionModel";
+import axios from axios;
 
 export const addNewQuestion = async (req, res) => {
     try {
-        newQuestionId = await createQuestion(req.body)
+        const newQuestionId = await createQuestion(req.body)
         res.status(201).json({success: true, message: 'Frage erfolgreich erstellt', questionId: newQuestionId})
 
     } catch (error) {
@@ -36,3 +36,18 @@ export const fetchAllQuestions = async (req,res) => {
 
     }
 }
+
+export const importApiQuestions = async (req,res) => {
+    try {
+        const amount = req.body.amount || 10;
+        const response = await axios.get(`https://opentdb.com/api.php?amount=${amount}&type=multiple`);
+        if (response.data.response_code !== 0) {
+            return res.status(500).json({success: false, message: 'Fehler beim Abrufen der Fragen'});
+        }
+
+        const apiQuestions = response.data.results
+
+    } catch {
+
+    }
+};
