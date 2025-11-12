@@ -15,16 +15,16 @@ import pool from '../db.js';
 export const createQuestion = async (questionData) => {
     const { 
         frage_text, 
-        korrekte_antwort, 
-        falsche_antwort_1, 
-        falsche_antwort_2, 
-        falsche_antwort_3 ,
+        right_answer, 
+        wrong_answer_1,
+        wrong_answer_2, 
+        wrong_answer_3, 
         schwierigkeit
     } = questionData;
 
     const [result] = await pool.query(
         'INSERT INTO fragen (frage_text, right_answer, wrong_answer_1, wrong_answer_2, wrong_answer_3, schwierigkeit) VALUES (?, ?, ?, ?, ?, ?)',
-        [frage_text, korrekte_antwort, falsche_antwort_1, falsche_antwort_2, falsche_antwort_3, schwierigkeit]
+        [frage_text, right_answer, wrong_answer_1, wrong_answer_2, wrong_answer_3, schwierigkeit]
     );
     return result.insertId;
 };
@@ -35,9 +35,9 @@ export const createQuestion = async (questionData) => {
  */
 
 export const createMultipleQuestions = async (questions) => {
-    const sql = "INSERT INTO fragen(frage_text, right answer, wrong answer_1, wrong_answer_2, wrong_answer_3, schwierigkeit) VALUES (?, ?, ?, ?, ?, ?)"
+    const sql = 'INSERT INTO fragen (frage_text, right_answer, wrong_answer_1, wrong_answer_2, wrong_answer_3, schwierigkeit) VALUES ?'
 
-    const values = questions.map(q => [q.frage_text, q.korrekte_antwort, q.falsche_antwort_1, q.falsche_antwort_2, q.falsche_antwort_3, q.schwierigkeit])
+    const values = questions.map(q => [q.frage_text, q.right_answer, q.wrong_answer_1, q.wrong_answer_2, q.wrong_answer_3, q.schwierigkeit])
 
     const [result] = await pool.query(sql, [values]);
 
@@ -49,5 +49,27 @@ export const createMultipleQuestions = async (questions) => {
 */
 export const getAllQuestions = async () => {
     const [rows] = await pool.query('SELECT * FROM fragen');
+    return rows;
+};
+
+
+/**
+ * Holt eine zufällige Auswahl von Fragen für ein neues Quiz.
+ * (5 easy, 5 medium, 5 hard)
+ * @returns {Promise<Array>} - Ein Array mit 15 Fragen.
+ */
+export const getQuizQuestions = async () => {
+    // Diese komplexe Abfrage führt drei separate Abfragen aus (eine pro Schwierigkeit),
+    // holt jeweils 5 zufällige Zeilen (ORDER BY RAND()) und fügt sie
+    // mit UNION ALL zu einem einzigen Ergebnis zusammen.
+    const sql = `
+        (SELECT * FROM FRAGE WHERE schwierigkeit = 'easy' ORDER BY RAND() LIMIT 5)
+        UNION ALL
+        (SELECT * FROM FRAGE WHERE schwierigkeit = 'medium' ORDER BY RAND() LIMIT 5)
+        UNION ALL
+        (SELECT * FROM FRAGE WHERE schwierigkeit = 'hard' ORDER BY RAND() LIMIT 5)
+    `;
+    
+    const [rows] = await pool.query(sql);
     return rows;
 };

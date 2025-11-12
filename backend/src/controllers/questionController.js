@@ -1,5 +1,5 @@
-import { createQuestion, getAllQuestions, createMultipleQuestions } from "../models/questionModel";
-import axios from axios;
+import { createQuestion, getAllQuestions, createMultipleQuestions } from "../models/questionModel.js";
+import axios from "axios";
 
 export const addNewQuestion = async (req, res) => {
     try {
@@ -16,7 +16,7 @@ export const fetchAllQuestions = async (req,res) => {
     try {
         const questions = await getAllQuestions();
         const shuffledQuestions = questions.map(q => {
-            const answers = [q.korrekte_antwort, q.falsche_antwort_1, q.falsche_antwort_2, q.falsche_antwort_3 ];
+            const answers = [q.right_answer, q.wrong_answer_1, q.wrong_answer_2, q.wrong_answer_3 ];
 
             for (let i = answers.length-1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -57,14 +57,28 @@ export const importApiQuestions = async (req,res) => {
             }
 
             const decode = (str) =>
-                str.replace(/&quot;/g,)
-                   .replace()
-                   .replace()
-                   .replace()
-                   .replace()
-        })
+                str.replace(/&quot;/g,'""')
+                   .replace(/&#039;/g,"'")
+                   .replace(/&amp;/g,"&")
+                   .replace(/&lt;/g, "<")
+                   .replace(/&gt;/g, ">")
+            
+            return {
+                frage_text: decode(apiQ.question),
+                right_answer: decode(apiQ.correct_answer),
+                wrong_answer_1: decode(answers[0]),
+                wrong_answer_2: decode(answers[1]),
+                wrong_answer_3: decode(answers[2]),
+                schwierigkeit: apiQ.difficulty
+            };
+        });
 
-    } catch {
+        const affectedRows = await createMultipleQuestions(formattedQuestions);
 
+        res.status(201).json({success: true, message: `${affectedRows} Fragen erfolgreich importiert.`})
+
+    } catch (error) {
+        console.error('Fehler beim Import der Fragen:', error)
+        res.status(500).json({success: false, message:'Serverfehler beim Import.'})
     }
 };

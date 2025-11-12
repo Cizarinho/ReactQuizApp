@@ -1,5 +1,5 @@
 import express from 'express';
-import { addNewQuestion, fetchAllQuestions } from '../controllers/questionController.js';
+import { addNewQuestion, fetchAllQuestions, importApiQuestions } from '../controllers/questionController.js';
 import { protect, adminOnly } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -11,13 +11,19 @@ const router = express.Router();
  */
 router.post('/', protect, adminOnly, addNewQuestion);
 
-
 /**
  * @route   GET /api/questions
  * @desc    Eingeloggter User ruft alle Fragen ab
  * @access  Private (Eingeloggt)
  */
 router.get('/', protect, fetchAllQuestions);
+
+/**
+ * @route POST /api/questions/import
+ * @desc Admin importiert Fragen von der Open Trivia DB
+ * @access Private (Admin)
+ */
+router.post('/import',protect, adminOnly, importApiQuestions)
 
 
 export default router;
