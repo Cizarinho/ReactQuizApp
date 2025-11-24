@@ -3,7 +3,8 @@ import cors from 'cors';
 import pool from './db.js';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
-import questionRoutes from './routes/questionRoutes.js'
+import questionRoutes from './routes/questionRoutes.js';
+import quizRoutes from './routes/quizRoutes.js';
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use(express.json())
 
 app.use('/api/auth', authRoutes)
 app.use('/api/questions', questionRoutes)
+app.use('/api/quiz', quizRoutes)
 
 app.get('/api/test', async (req,res) => {
     try {

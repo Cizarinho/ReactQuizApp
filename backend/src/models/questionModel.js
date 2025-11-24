@@ -63,11 +63,11 @@ export const getQuizQuestions = async () => {
     // holt jeweils 5 zufällige Zeilen (ORDER BY RAND()) und fügt sie
     // mit UNION ALL zu einem einzigen Ergebnis zusammen.
     const sql = `
-        (SELECT * FROM FRAGE WHERE schwierigkeit = 'easy' ORDER BY RAND() LIMIT 5)
+        (SELECT * FROM fragen WHERE schwierigkeit = 'easy' ORDER BY RAND() LIMIT 5)
         UNION ALL
-        (SELECT * FROM FRAGE WHERE schwierigkeit = 'medium' ORDER BY RAND() LIMIT 5)
+        (SELECT * FROM fragen WHERE schwierigkeit = 'medium' ORDER BY RAND() LIMIT 5)
         UNION ALL
-        (SELECT * FROM FRAGE WHERE schwierigkeit = 'hard' ORDER BY RAND() LIMIT 5)
+        (SELECT * FROM fragen WHERE schwierigkeit = 'hard' ORDER BY RAND() LIMIT 5)
     `;
     
     const [rows] = await pool.query(sql);

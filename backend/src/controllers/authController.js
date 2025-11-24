@@ -1,13 +1,14 @@
 import pool from '../db.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { findUserByUsername } from '../models/userModel.js';
+import { findUserByUsername, createUser} from '../models/userModel.js';
 
 
 export const registerUser = async (req,res) => {
+    console.log("Daten vom Front:", req.body)
     try 
     {
-        const {benutzername, password} = req.body;
+        const {benutzername, passwort} = req.body;
 
         const existingUser = await findUserByUsername(benutzername);
 
@@ -17,7 +18,7 @@ export const registerUser = async (req,res) => {
 
         const saltDelay = 10
         const salt = await bcrypt.genSalt(saltDelay)
-        const password_hash = await bcrypt.hash(password, salt)
+        const password_hash = await bcrypt.hash(passwort, salt)
 
         const newUserId = await createUser(benutzername, password_hash);
 
@@ -35,7 +36,7 @@ export const registerUser = async (req,res) => {
 
 export const loginUser = async (req,res) => {
     try {
-        const {benutzername, password} = req.body;
+        const {benutzername, passwort} = req.body;
         
         const user = await findUserByUsername(benutzername);
         if (!user) 
@@ -43,7 +44,7 @@ export const loginUser = async (req,res) => {
             return res.status(401).json({success:false, message: 'Login fehlgeschlagen'});
         }
 
-        const isMatch = await bcrypt.compare(password, user.password_hash);
+        const isMatch = await bcrypt.compare(passwort, user.password_hash);
         if (!isMatch) 
         {
             return res.status(401).json({success: false, message: 'Login fehlgeschlagen'});

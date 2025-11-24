@@ -26,7 +26,7 @@ export const getLeaderboard = async () => {
             b.benutzername, 
             l.punktestand, 
             l.gespielt_am 
-         FROM LEADERBOARD_EINTRAG l
+         FROM leaderboard l
          JOIN BENUTZER b ON l.benutzer_id = b.benutzer_id
          ORDER BY l.punktestand DESC
          LIMIT 20`
